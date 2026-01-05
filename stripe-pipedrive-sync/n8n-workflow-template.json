@@ -1,0 +1,323 @@
+{
+  "name": "Stripe → Pipedrive Sync (Recurring Revenue)",
+  "nodes": [
+    {
+      "parameters": {
+        "events": [
+          "customer.subscription.created"
+        ]
+      },
+      "name": "Stripe Webhook Trigger",
+      "type": "n8n-nodes-base.stripeTrigger",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "auto-generated"
+    },
+    {
+      "parameters": {
+        "resource": "customer",
+        "operation": "get",
+        "customerId": "={{ $json.data.object.customer }}"
+      },
+      "name": "Get Stripe Customer",
+      "type": "n8n-nodes-base.stripe",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "resource": "product",
+        "operation": "get",
+        "productId": "={{ $json.data.object.items.data[0].price.product }}"
+      },
+      "name": "Get Stripe Product",
+      "type": "n8n-nodes-base.stripe",
+      "typeVersion": 1,
+      "position": [450, 450]
+    },
+    {
+      "parameters": {
+        "resource": "person",
+        "operation": "search",
+        "term": "={{ $node['Get Stripe Customer'].json.email }}",
+        "searchFields": [
+          "email"
+        ],
+        "exactMatch": true
+      },
+      "name": "Search Person in Pipedrive",
+      "type": "n8n-nodes-base.pipedrive",
+      "typeVersion": 1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.data.items.length > 0 }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "name": "Person Exists?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "resource": "organization",
+        "operation": "create",
+        "name": "={{ $node['Get Stripe Customer'].json.name || $node['Get Stripe Customer'].json.email.split('@')[0] + ' Company' }}",
+        "additionalFields": {}
+      },
+      "name": "Create Organization",
+      "type": "n8n-nodes-base.pipedrive",
+      "typeVersion": 1,
+      "position": [1050, 450]
+    },
+    {
+      "parameters": {
+        "resource": "person",
+        "operation": "create",
+        "name": "={{ $node['Get Stripe Customer'].json.name }}",
+        "additionalFields": {
+          "email": "={{ $node['Get Stripe Customer'].json.email }}",
+          "orgId": "={{ $node['Create Organization'].json.data.id }}",
+          "customProperties": {
+            "property": [
+              {
+                "name": "stripe_customer_id",
+                "value": "={{ $node['Get Stripe Customer'].json.id }}"
+              }
+            ]
+          }
+        }
+      },
+      "name": "Create Person",
+      "type": "n8n-nodes-base.pipedrive",
+      "typeVersion": 1,
+      "position": [1250, 450]
+    },
+    {
+      "parameters": {
+        "resource": "product",
+        "operation": "create",
+        "name": "={{ $node['Get Stripe Product'].json.name }}",
+        "additionalFields": {
+          "code": "={{ $node['Get Stripe Product'].json.id }}",
+          "unit": "subscription",
+          "prices": {
+            "price": [
+              {
+                "price": "={{ $json.data.object.items.data[0].price.unit_amount / 100 }}",
+                "currency": "={{ $json.data.object.currency.toUpperCase() }}"
+              }
+            ]
+          },
+          "customProperties": {
+            "property": [
+              {
+                "name": "stripe_price_id",
+                "value": "={{ $json.data.object.items.data[0].price.id }}"
+              },
+              {
+                "name": "stripe_product_id",
+                "value": "={{ $node['Get Stripe Product'].json.id }}"
+              }
+            ]
+          }
+        }
+      },
+      "name": "Create Product",
+      "type": "n8n-nodes-base.pipedrive",
+      "typeVersion": 1,
+      "position": [1450, 450]
+    },
+    {
+      "parameters": {
+        "resource": "deal",
+        "operation": "create",
+        "title": "={{ $node['Get Stripe Customer'].json.name }} - {{ $node['Get Stripe Product'].json.name }}",
+        "associateWith": "person",
+        "personId": "={{ $node['Create Person'].json.data.id }}",
+        "additionalFields": {
+          "orgId": "={{ $node['Create Organization'].json.data.id }}",
+          "value": "={{ $json.data.object.items.data[0].price.unit_amount / 100 }}",
+          "currency": "={{ $json.data.object.currency.toUpperCase() }}",
+          "status": "open",
+          "customProperties": {
+            "property": [
+              {
+                "name": "stripe_subscription_id",
+                "value": "={{ $json.data.object.id }}"
+              },
+              {
+                "name": "billing_frequency",
+                "value": "monthly"
+              }
+            ]
+          }
+        }
+      },
+      "name": "Create Deal",
+      "type": "n8n-nodes-base.pipedrive",
+      "typeVersion": 1,
+      "position": [1650, 450]
+    },
+    {
+      "parameters": {
+        "resource": "dealProduct",
+        "operation": "add",
+        "dealId": "={{ $node['Create Deal'].json.data.id }}",
+        "productId": "={{ $node['Create Product'].json.data.id }}",
+        "additionalFields": {
+          "itemPrice": "={{ $json.data.object.items.data[0].price.unit_amount / 100 }}",
+          "quantity": 1,
+          "duration": 1,
+          "durationUnit": "month",
+          "billingFrequency": "monthly",
+          "billingFrequencyCycles": null,
+          "enabledFlag": true
+        }
+      },
+      "name": "Add Product to Deal",
+      "type": "n8n-nodes-base.pipedrive",
+      "typeVersion": 1,
+      "position": [1850, 450]
+    },
+    {
+      "parameters": {
+        "resource": "deal",
+        "operation": "create",
+        "title": "={{ $node['Get Stripe Customer'].json.name }} - {{ $node['Get Stripe Product'].json.name }}",
+        "associateWith": "person",
+        "personId": "={{ $node['Search Person in Pipedrive'].json.data.items[0].id }}",
+        "additionalFields": {
+          "value": "={{ $json.data.object.items.data[0].price.unit_amount / 100 }}",
+          "currency": "={{ $json.data.object.currency.toUpperCase() }}",
+          "status": "open",
+          "customProperties": {
+            "property": [
+              {
+                "name": "stripe_subscription_id",
+                "value": "={{ $json.data.object.id }}"
+              }
+            ]
+          }
+        }
+      },
+      "name": "Create Deal - Existing Customer",
+      "type": "n8n-nodes-base.pipedrive",
+      "typeVersion": 1,
+      "position": [1050, 150]
+    }
+  ],
+  "connections": {
+    "Stripe Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Stripe Customer",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Stripe Product",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Stripe Customer": {
+      "main": [
+        [
+          {
+            "node": "Search Person in Pipedrive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Person in Pipedrive": {
+      "main": [
+        [
+          {
+            "node": "Person Exists?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Person Exists?": {
+      "main": [
+        [
+          {
+            "node": "Create Deal - Existing Customer",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Organization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Organization": {
+      "main": [
+        [
+          {
+            "node": "Create Person",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Person": {
+      "main": [
+        [
+          {
+            "node": "Create Product",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Product": {
+      "main": [
+        [
+          {
+            "node": "Create Deal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Deal": {
+      "main": [
+        [
+          {
+            "node": "Add Product to Deal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
