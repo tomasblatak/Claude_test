@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Logo Preview</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .logo-display {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            display: inline-block;
+        }
+
+        .controls {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .button {
+            background: #2563EB;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 5px;
+            transition: background 0.3s;
+        }
+
+        .button:hover {
+            background: #1d4ed8;
+        }
+
+        .info {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f0f9ff;
+            border-radius: 10px;
+            border-left: 4px solid #2563EB;
+            text-align: left;
+        }
+
+        .info h3 {
+            margin-top: 0;
+            color: #2563EB;
+        }
+
+        .info code {
+            background: #e0e7ff;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+
+        .info ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .info li {
+            margin: 8px 0;
+            color: #444;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Animated Logo Preview</h1>
+        <p>Your logo with pop-in and pulse animation</p>
+
+        <div class="logo-display">
+            <svg id="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="200" height="200">
+                <defs>
+                    <style>
+                        @keyframes popIn {
+                            0% {
+                                transform: scale(0);
+                                opacity: 0;
+                            }
+                            50% {
+                                transform: scale(1.1);
+                            }
+                            100% {
+                                transform: scale(1);
+                                opacity: 1;
+                            }
+                        }
+
+                        @keyframes pulse {
+                            0%, 100% {
+                                transform: scale(1);
+                            }
+                            50% {
+                                transform: scale(1.05);
+                            }
+                        }
+
+                        @keyframes shine {
+                            0% {
+                                opacity: 0;
+                            }
+                            50% {
+                                opacity: 0.3;
+                            }
+                            100% {
+                                opacity: 0;
+                            }
+                        }
+
+                        .hexagon {
+                            animation: popIn 0.6s ease-out, pulse 2s ease-in-out 0.6s infinite;
+                            transform-origin: center;
+                        }
+
+                        .bolt {
+                            animation: popIn 0.6s ease-out 0.2s backwards, pulse 2s ease-in-out 0.8s infinite;
+                            transform-origin: center;
+                        }
+
+                        .shine {
+                            animation: shine 2s ease-in-out 0.6s infinite;
+                        }
+                    </style>
+                </defs>
+
+                <!-- Hexagon background -->
+                <g class="hexagon">
+                    <polygon points="50,5 90,27.5 90,72.5 50,95 10,72.5 10,27.5"
+                             fill="#2563EB"
+                             stroke="none"/>
+                </g>
+
+                <!-- Lightning bolt / feather shape -->
+                <g class="bolt">
+                    <path d="M 50 25 L 35 50 L 45 50 L 40 75 L 65 45 L 55 45 L 60 25 Z"
+                          fill="white"/>
+                </g>
+
+                <!-- Shine effect overlay -->
+                <g class="shine">
+                    <polygon points="50,5 90,27.5 90,72.5 50,95 10,72.5 10,27.5"
+                             fill="white"
+                             opacity="0"/>
+                </g>
+            </svg>
+        </div>
+
+        <div class="controls">
+            <button class="button" onclick="restartAnimation()">🔄 Restart Animation</button>
+        </div>
+
+        <div class="info">
+            <h3>📦 Converting to GIF</h3>
+            <ol>
+                <li>
+                    <strong>Option 1 - Online Converter:</strong><br>
+                    Use a tool like <code>ezgif.com</code> or <code>svg2gif.com</code><br>
+                    Upload the <code>logo.svg</code> file and convert to GIF
+                </li>
+                <li>
+                    <strong>Option 2 - Screen Recording:</strong><br>
+                    Record this animation with a screen recorder and convert to GIF
+                </li>
+                <li>
+                    <strong>Option 3 - Browser Developer Tools:</strong><br>
+                    Open browser DevTools → Performance → Record the animation → Export
+                </li>
+            </ol>
+            <p><strong>💡 Tip:</strong> For email profile pictures, keep the GIF under 200KB and use dimensions of 200x200px or smaller.</p>
+        </div>
+    </div>
+
+    <script>
+        function restartAnimation() {
+            const logo = document.getElementById('logo');
+            const clone = logo.cloneNode(true);
+            logo.parentNode.replaceChild(clone, logo);
+        }
+    </script>
+</body>
+</html>

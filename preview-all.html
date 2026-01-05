@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logo Animation Styles - Choose Your Favorite!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+        }
+
+        .card h2 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.5em;
+        }
+
+        .card p {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 0.95em;
+        }
+
+        .logo-container {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 250px;
+            margin-bottom: 20px;
+        }
+
+        .restart-btn {
+            width: 100%;
+            padding: 12px;
+            background: #2563EB;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-weight: 500;
+        }
+
+        .restart-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .restart-btn:active {
+            transform: scale(0.98);
+        }
+
+        .instructions {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 1400px;
+            margin: 50px auto 0;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .instructions h2 {
+            color: #2563EB;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+
+        .instructions h3 {
+            color: #333;
+            margin: 25px 0 15px;
+            font-size: 1.3em;
+        }
+
+        .instructions p, .instructions li {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .instructions ol {
+            padding-left: 25px;
+        }
+
+        .instructions code {
+            background: #f0f0f0;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .instructions .command {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #e0f2fe;
+            color: #0369a1;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎨 Choose Your Logo Animation</h1>
+        <p>Select the style that best grabs attention for your email profile picture</p>
+    </div>
+
+    <div class="grid">
+        <!-- Pop & Pulse -->
+        <div class="card">
+            <span class="badge">BALANCED</span>
+            <h2>Pop & Pulse</h2>
+            <p>Smooth pop-in with a gentle continuous pulse. Professional yet eye-catching.</p>
+            <div class="logo-container">
+                <object id="logo1" data="logo.svg" type="image/svg+xml" width="200" height="200"></object>
+            </div>
+            <button class="restart-btn" onclick="restartLogo('logo1', 'logo.svg')">🔄 Restart Animation</button>
+        </div>
+
+        <!-- Bounce & Float -->
+        <div class="card">
+            <span class="badge">DYNAMIC</span>
+            <h2>Bounce & Float</h2>
+            <p>Energetic bounce entrance with floating motion and glow effect. Very attention-grabbing!</p>
+            <div class="logo-container">
+                <object id="logo2" data="logo-bounce.svg" type="image/svg+xml" width="200" height="200"></object>
+            </div>
+            <button class="restart-btn" onclick="restartLogo('logo2', 'logo-bounce.svg')">🔄 Restart Animation</button>
+        </div>
+
+        <!-- Spin & Rotate -->
+        <div class="card">
+            <span class="badge">PLAYFUL</span>
+            <h2>Spin & Rotate</h2>
+            <p>Spinning entrance with subtle rotation. Fun and memorable impression.</p>
+            <div class="logo-container">
+                <object id="logo3" data="logo-rotate.svg" type="image/svg+xml" width="200" height="200"></object>
+            </div>
+            <button class="restart-btn" onclick="restartLogo('logo3', 'logo-rotate.svg')">🔄 Restart Animation</button>
+        </div>
+
+        <!-- Zoom & Breathe -->
+        <div class="card">
+            <span class="badge">ENERGETIC</span>
+            <h2>Zoom & Breathe</h2>
+            <p>Powerful zoom-in with breathing motion. Bold and confident style.</p>
+            <div class="logo-container">
+                <object id="logo4" data="logo-zoom.svg" type="image/svg+xml" width="200" height="200"></object>
+            </div>
+            <button class="restart-btn" onclick="restartLogo('logo4', 'logo-zoom.svg')">🔄 Restart Animation</button>
+        </div>
+    </div>
+
+    <div class="instructions">
+        <h2>📦 How to Convert to GIF</h2>
+
+        <h3>Method 1: Using Online Tools (Easiest) ⭐ Recommended</h3>
+        <ol>
+            <li>Go to <code>ezgif.com/svg-to-gif</code></li>
+            <li>Upload your chosen SVG file (e.g., <code>logo.svg</code>)</li>
+            <li>Set dimensions to <strong>200x200</strong> pixels</li>
+            <li>Set animation duration to <strong>3-4 seconds</strong></li>
+            <li>Click "Convert to GIF"</li>
+            <li>Download and optimize if needed to stay under 200KB</li>
+        </ol>
+
+        <h3>Method 2: Using FFmpeg (Advanced)</h3>
+        <p>If you have FFmpeg installed, you can use this command:</p>
+        <div class="command">
+# Install FFmpeg first if needed<br>
+# Then open the HTML file in browser and record<br>
+ffmpeg -i recording.mp4 -vf "fps=10,scale=200:-1:flags=lanczos" -loop 0 logo.gif
+        </div>
+
+        <h3>Method 3: Screen Recording</h3>
+        <ol>
+            <li>Open the animated HTML file in your browser</li>
+            <li>Use a screen recorder (QuickTime on Mac, OBS on Windows/Linux)</li>
+            <li>Record 3-4 seconds of the animation</li>
+            <li>Convert the video to GIF using <code>ezgif.com/video-to-gif</code></li>
+            <li>Crop to square and resize to 200x200px</li>
+        </ol>
+
+        <h3>💡 Tips for Email Profile Pictures</h3>
+        <ul>
+            <li><strong>Size:</strong> Keep under 200KB for email compatibility</li>
+            <li><strong>Dimensions:</strong> 200x200px or 150x150px works best</li>
+            <li><strong>Duration:</strong> 2-4 seconds is optimal (not too long, not too short)</li>
+            <li><strong>Loop:</strong> Make sure the GIF loops seamlessly</li>
+            <li><strong>Test:</strong> Send yourself a test email to see how it looks!</li>
+        </ul>
+
+        <h3>📁 Files Created</h3>
+        <ul>
+            <li><code>logo.svg</code> - Pop & Pulse animation</li>
+            <li><code>logo-bounce.svg</code> - Bounce & Float animation</li>
+            <li><code>logo-rotate.svg</code> - Spin & Rotate animation</li>
+            <li><code>logo-zoom.svg</code> - Zoom & Breathe animation</li>
+            <li><code>animated-logo.html</code> - Single animation preview</li>
+            <li><code>preview-all.html</code> - Compare all styles (this file)</li>
+        </ul>
+    </div>
+
+    <script>
+        function restartLogo(elementId, svgFile) {
+            const object = document.getElementById(elementId);
+            const parent = object.parentNode;
+            const newObject = object.cloneNode(true);
+            parent.replaceChild(newObject, object);
+
+            // Re-assign ID
+            newObject.id = elementId;
+
+            // Force reload
+            newObject.data = svgFile + '?t=' + new Date().getTime();
+        }
+
+        // Auto-restart all animations every 8 seconds for demo
+        setInterval(() => {
+            const objects = document.querySelectorAll('object[id^="logo"]');
+            objects.forEach((obj, index) => {
+                setTimeout(() => {
+                    const svgFiles = ['logo.svg', 'logo-bounce.svg', 'logo-rotate.svg', 'logo-zoom.svg'];
+                    restartLogo(obj.id, svgFiles[index]);
+                }, index * 200); // Stagger the restarts
+            });
+        }, 8000);
+    </script>
+</body>
+</html>
