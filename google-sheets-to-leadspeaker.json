@@ -1,0 +1,282 @@
+{
+  "name": "Google Sheets → Leadspeaker.com",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "rowAdded",
+        "sheetId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultName": ""
+        },
+        "options": {}
+      },
+      "id": "0c8a4c8e-3f4b-4d8b-9e2a-1b5c6d7e8f9a",
+      "name": "Google Sheets Trigger",
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 2,
+      "position": [
+        250,
+        300
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets account"
+        }
+      },
+      "webhookId": ""
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "email",
+              "name": "email",
+              "value": "={{ $json.Email }}",
+              "type": "string"
+            },
+            {
+              "id": "firstName",
+              "name": "firstName",
+              "value": "={{ $json['First Name'] || $json['Jméno'] || $json.firstName }}",
+              "type": "string"
+            },
+            {
+              "id": "lastName",
+              "name": "lastName",
+              "value": "={{ $json['Last Name'] || $json['Příjmení'] || $json.lastName }}",
+              "type": "string"
+            },
+            {
+              "id": "phone",
+              "name": "phone",
+              "value": "={{ $json.Phone || $json['Telefon'] || $json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "company",
+              "name": "company",
+              "value": "={{ $json.Company || $json['Společnost'] || $json.company }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1d9b5d9f-4e5c-5f9c-af3b-2c6d7e8f9a0b",
+      "name": "Mapování polí",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [
+        470,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.leadspeaker.com/v1/contacts",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "leadspeakerApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "email",
+              "value": "={{ $json.email }}"
+            },
+            {
+              "name": "first_name",
+              "value": "={{ $json.firstName }}"
+            },
+            {
+              "name": "last_name",
+              "value": "={{ $json.lastName }}"
+            },
+            {
+              "name": "phone",
+              "value": "={{ $json.phone }}"
+            },
+            {
+              "name": "company",
+              "value": "={{ $json.company }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2e0c6e0g-5f6d-6g0d-bg4c-3d7e8f9g0b1c",
+      "name": "Leadspeaker API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        690,
+        300
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "Leadspeaker API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "email-check",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "3f1d7f1h-6g7e-7h1e-ch5d-4e8f9g0h1c2d",
+      "name": "Kontrola emailu",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        910,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Log úspěšného přidání kontaktu\nconst contact = $input.all()[0].json;\n\nconsole.log('✅ Kontakt úspěšně přidán do Leadspeaker:', {\n  email: contact.email,\n  jméno: `${contact.firstName} ${contact.lastName}`,\n  timestamp: new Date().toISOString()\n});\n\nreturn { \n  success: true,\n  message: 'Kontakt úspěšně přidán do Leadspeaker',\n  contact: contact\n};"
+      },
+      "id": "4g2e8g2i-7h8f-8i2f-di6e-5f9g0h1i2d3e",
+      "name": "Log úspěchu",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1130,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Log chybějícího emailu\nconst contact = $input.all()[0].json;\n\nconsole.error('❌ Kontakt NEPŘIDÁN - chybí email:', {\n  data: contact,\n  timestamp: new Date().toISOString()\n});\n\nreturn { \n  success: false,\n  error: 'Chybí email',\n  contact: contact\n};"
+      },
+      "id": "5h3f9h3j-8i9g-9j3g-ej7f-6g0h1i2j3e4f",
+      "name": "Log chyby",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1130,
+        400
+      ]
+    }
+  ],
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Mapování polí",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mapování polí": {
+      "main": [
+        [
+          {
+            "node": "Leadspeaker API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leadspeaker API": {
+      "main": [
+        [
+          {
+            "node": "Kontrola emailu",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Kontrola emailu": {
+      "main": [
+        [
+          {
+            "node": "Log úspěchu",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log chyby",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "createdAt": "2026-01-06T00:00:00.000Z",
+      "updatedAt": "2026-01-06T00:00:00.000Z",
+      "id": "1",
+      "name": "Google Sheets"
+    },
+    {
+      "createdAt": "2026-01-06T00:00:00.000Z",
+      "updatedAt": "2026-01-06T00:00:00.000Z",
+      "id": "2",
+      "name": "Leadspeaker"
+    },
+    {
+      "createdAt": "2026-01-06T00:00:00.000Z",
+      "updatedAt": "2026-01-06T00:00:00.000Z",
+      "id": "3",
+      "name": "CRM"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2026-01-06T00:00:00.000Z",
+  "versionId": ""
+}

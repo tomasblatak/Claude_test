@@ -1,6 +1,14 @@
-# 🎨 Animated Logo for Email Profile Picture
+# 🎨 Animated Logo & Marketing Automation
 
-This repository contains animated SVG versions of your logo with different animation styles, perfect for use as an eye-catching email profile picture.
+This repository contains:
+- **Animated SVG logos** - Different animation styles perfect for email profile pictures
+- **N8N Workflow** - Google Sheets to Leadspeaker.com automation for contact management
+
+---
+
+## 🎨 Animated Logo for Email Profile Picture
+
+Animated SVG versions of your logo with different animation styles, perfect for use as an eye-catching email profile picture.
 
 ## 🎬 Animation Styles
 
@@ -125,4 +133,52 @@ If you need to adjust colors, timing, or create a custom animation style, feel f
 
 ---
 
-**Made with ❤️ for eye-catching email communications**
+## 🔄 N8N Workflow: Google Sheets → Leadspeaker.com
+
+### Co dělá tento workflow?
+
+Automaticky synchronizuje kontakty z Google Sheets do platformy Leadspeaker.com:
+
+1. ⏱️ **Monitoruje Google Sheets** - Sleduje nové řádky každou minutu
+2. 🔄 **Mapuje data** - Převádí sloupce na správná pole
+3. ☁️ **Nahrává kontakty** - Vytváří nové kontakty v Leadspeaker
+4. 📊 **Loguje výsledky** - Zaznamenává úspěchy i chyby
+
+### 🚀 Rychlý start
+
+1. **Import workflow** do N8N:
+   - Soubor: `google-sheets-to-leadspeaker.json`
+
+2. **Konfigurace Google Sheets:**
+   - Připojte Google účet
+   - Vyberte spreadsheet
+   - Nastavte trigger na "Row Added"
+
+3. **Konfigurace Leadspeaker API:**
+   - Získejte API klíč z Leadspeaker.com
+   - Nastavte autorizační header v N8N
+
+4. **Testování:**
+   - Přidejte testovací řádek do Sheets
+   - Zkontrolujte, že kontakt byl vytvořen v Leadspeaker
+
+### 📚 Kompletní dokumentace
+
+Detailní návod najdete v souboru **[N8N-WORKFLOW-SETUP.md](N8N-WORKFLOW-SETUP.md)**, který obsahuje:
+
+- ✅ Krok za krokem instalaci
+- ✅ Konfiguraci Google Sheets a Leadspeaker API
+- ✅ Přizpůsobení mapování polí
+- ✅ Řešení problémů
+- ✅ Tipy a triky
+
+### 📁 Soubory workflow
+
+```
+├── google-sheets-to-leadspeaker.json    # N8N workflow soubor
+└── N8N-WORKFLOW-SETUP.md               # Kompletní dokumentace (CZ)
+```
+
+---
+
+**Made with ❤️ for eye-catching email communications & marketing automation**
